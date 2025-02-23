@@ -1,0 +1,27 @@
+{
+  "name": "bot-auto-searcher",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node dist/index.js",
+    "dev": "nodemon --ext ts --exec ts-node src/index.ts --signal SIGTERM"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "cheerio": "^1.0.0",
+    "node-telegram-bot-api": "^0.66.0"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.9.36",
+    "@types/cheerio": "^0.22.35",
+    "@types/node": "^22.13.5",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  }
+}
