@@ -10,6 +10,13 @@ const otomotoController = new OtomotoController();
 
 console.log('Bot is running');
 
+// Перезапускаем polling при запуске
+bot.on("polling_error", (error) => {
+  console.error("Polling error:", error);
+  bot.stopPolling();
+  setTimeout(() => bot.startPolling(), 5000);
+});
+
 setInterval(() => checkWebsites(), 5 * 60 * 1000);
 
 bot.onText(/\/start/, (msg) => {
@@ -31,7 +38,7 @@ bot.onText(/\/stop/, (msg) => {
 });
 
 
-const checkWebsites = async (chatId?: string) => {
+export const checkWebsites = async (chatId?: string) => {
   try {
     console.log('Checking websites...');
     const newItems = await otomotoController.checkForNewListings();
