@@ -16,6 +16,7 @@ bot.onText(/\/start/, (msg) => {
   console.log('Started with chat ID: ', chatId);
   bot.sendMessage(chatId, 'Бот запущен! Начинаю мониторинг объявлений...');
   chatsSet.add(chatId);
+  checkWebsites(chatId.toString());
 });
 
 bot.onText(/\/stop/, (msg) => {
@@ -24,17 +25,21 @@ bot.onText(/\/stop/, (msg) => {
   bot.sendMessage(msg.chat.id, `Мониторинг для чата ${msg.chat.id} остановлен.`);
 });
 
-const checkWebsites = async () => {
+
+const checkWebsites = async (chatId?: string) => {
   try {
     const newItems = await otomotoController.checkForNewListings();
     console.log('Checked in: ', new Date().toLocaleString());
-    const newItemsFlat = newItems.flat();
-    if (newItemsFlat.length === 0) {
+    if (newItems.length === 0) {
       return;
     } else {
-      chatsSet.forEach(chatId => {
-        bot.sendMessage(chatId, `Найдено ${newItemsFlat.length} новых объявлений: \n${newItemsFlat.join('\n\n')}`);
-      });
+      if (chatId) {
+        bot.sendMessage(chatId, `Найдено ${newItems.length} новых объявлений: \n${newItems.join('\n\n')}`);
+      } else {
+        chatsSet.forEach(chatId => {
+          bot.sendMessage(chatId, `Найдено ${newItems.length} новых объявлений: \n${newItems.join('\n\n')}`);
+        });
+      }
     }
   } catch (error) {
     console.error(`❌ Error checking websites: ${error.message}`);
