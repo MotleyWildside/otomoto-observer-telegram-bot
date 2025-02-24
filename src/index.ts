@@ -27,7 +27,7 @@ bot.onText(/\/stop/, (msg) => {
 });
 
 const checkWebsites = async (chatId: string) => {
-  console.log(`Checking websites for chat ${chatId} n ${new Date().toLocaleDateString()}`);
+  console.log(`Checking websites for chat ${chatId} in ${new Date().toLocaleDateString()}`);
   try {
     const controllersList = controllersMap.get(chatId);
     const newItems = await Promise.all(controllersList.map(controller => controller.checkForNewListings()));
