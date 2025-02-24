@@ -1,13 +1,12 @@
 import TelegramBot from 'node-telegram-bot-api';
 import {OtomotoController} from "./controllers/OtomotoController";
+import 'dotenv/config';
 
-const TOKEN = '7453481532:AAG0kTIs433v0iujEU8Kc0t7dfF7EeRkzUg'
 
-const bot = new TelegramBot(TOKEN, { polling: true });
+const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: true });
 const intervalList = new Map();
 const controllersMap = new Map();
 
-// Обработка команды /start
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
   bot.sendMessage(chatId, 'Бот запущен! Начинаю мониторинг объявлений...');
@@ -15,7 +14,7 @@ bot.onText(/\/start/, (msg) => {
     controllersMap.set(chatId, [new OtomotoController()]);
   }
   checkWebsites(chatId);
-  intervalList.set(chatId, setInterval(() => checkWebsites(chatId), 30 * 60 * 1000));
+  intervalList.set(chatId, setInterval(() => checkWebsites(chatId), 5 * 60 * 1000));
 });
 
 bot.onText(/\/stop/, (msg) => {
