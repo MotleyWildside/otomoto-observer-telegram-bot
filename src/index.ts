@@ -7,8 +7,11 @@ const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: true });
 const intervalList = new Map();
 const controllersMap = new Map();
 
+console.log('Bot is running');
+
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
+  console.log('Started with chat ID: ', chatId);
   bot.sendMessage(chatId, 'Бот запущен! Начинаю мониторинг объявлений...');
   if (!controllersMap.has(chatId)) {
     controllersMap.set(chatId, [new OtomotoController()]);
@@ -19,10 +22,12 @@ bot.onText(/\/start/, (msg) => {
 
 bot.onText(/\/stop/, (msg) => {
   clearInterval(intervalList.get(msg.chat.id));
+  console.log('Stopped with chat ID: ', msg.chat.id);
   bot.sendMessage(msg.chat.id, `Мониторинг для чата ${msg.chat.id} остановлен.`);
 });
 
 const checkWebsites = async (chatId: string) => {
+  console.log(`Checking websites for chat ${chatId} n ${new Date().toLocaleDateString()}`);
   try {
     const controllersList = controllersMap.get(chatId);
     const newItems = await Promise.all(controllersList.map(controller => controller.checkForNewListings()));
