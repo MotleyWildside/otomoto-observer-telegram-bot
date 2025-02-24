@@ -4,11 +4,10 @@ import axios from 'axios';
 
 
 export class OtomotoController implements BasicController {
-  processedListingIds: Set<string> = new Set();
   parsingLink = 'https://www.otomoto.pl/osobowe/tesla/model-3/od-2020?search%5Bfilter_enum_damaged%5D=0&search%5Bfilter_float_mileage:to%5D=140000&search%5Bfilter_float_price:to%5D=110000&search%5Border%5D=created_at_first:desc';
 
-  async checkForNewListings(): Promise<string[]> {
-    const newListingUrls: string[] = [];
+  async checkForNewListings(): Promise<Record<string, string>> {
+    const newListingUrls: Record<string, string> = {};
     try {
       const response = await axios.get(this.parsingLink, {
         headers: {
@@ -26,9 +25,8 @@ export class OtomotoController implements BasicController {
         const articleId = $(element).attr('data-id');
         const section = $(element).find('h2').first();
         const link = section.find('a').first().attr('href');
-        if (articleId && !this.processedListingIds.has(articleId)) {
-          newListingUrls.push(link);
-          this.processedListingIds.add(articleId);
+        if (articleId) {
+          newListingUrls[articleId] = link;
         }
       });
 

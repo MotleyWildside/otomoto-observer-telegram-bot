@@ -5,6 +5,7 @@ import 'dotenv/config';
 
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: true });
 const chatsSet = new Set();
+const processedIds = new Map<string, string[]>();
 const otomotoController = new OtomotoController();
 
 console.log('Bot is running');
@@ -14,9 +15,13 @@ setInterval(() => checkWebsites(), 5 * 60 * 1000);
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
   console.log('Started with chat ID: ', chatId);
-  bot.sendMessage(chatId, 'Бот запущен! Начинаю мониторинг объявлений...');
-  chatsSet.add(chatId);
-  checkWebsites(chatId.toString());
+  if (chatsSet.has(chatId)) {
+    bot.sendMessage(chatId, 'Мониторинг уже запущен для этого чата.');
+  } else {
+    bot.sendMessage(chatId, 'Бот запущен! Начинаю мониторинг объявлений...');
+    chatsSet.add(chatId);
+    checkWebsites(chatId.toString());
+  }
 });
 
 bot.onText(/\/stop/, (msg) => {
@@ -28,19 +33,25 @@ bot.onText(/\/stop/, (msg) => {
 
 const checkWebsites = async (chatId?: string) => {
   try {
+    console.log('Checking websites...');
     const newItems = await otomotoController.checkForNewListings();
     console.log('Checked in: ', new Date().toLocaleString());
-    if (newItems.length === 0) {
-      return;
-    } else {
-      if (chatId) {
-        bot.sendMessage(chatId, `Найдено ${newItems.length} новых объявлений: \n${newItems.join('\n\n')}`);
-      } else {
-        chatsSet.forEach(chatId => {
-          bot.sendMessage(chatId, `Найдено ${newItems.length} новых объявлений: \n${newItems.join('\n\n')}`);
+    chatsSet.forEach((chatId: string) => {
+      const localNewItems = {...newItems};
+      if (processedIds.has(chatId)) {
+        processedIds.get(chatId).forEach(id => {
+          if (localNewItems[id]) {
+            delete localNewItems[id];
+          }
         });
+      } else {
+        processedIds.set(chatId, []);
       }
-    }
+      if (Object.keys(localNewItems).length > 0) {
+        bot.sendMessage(chatId, `Найдено ${Object.keys(localNewItems).length} новых объявлений: \n${Object.values(localNewItems).join('\n\n')}`);
+      }
+      processedIds.get(chatId).push(...Object.keys(localNewItems));
+    });
   } catch (error) {
     console.error(`❌ Error checking websites: ${error.message}`);
   }
