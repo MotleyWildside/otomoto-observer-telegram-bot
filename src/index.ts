@@ -1,16 +1,14 @@
 import TelegramBot from 'node-telegram-bot-api';
 import {OtomotoController} from "./controllers/OtomotoController";
-import { drizzle } from 'drizzle-orm/libsql';
-
 
 import 'dotenv/config';
 import {chatsIdsTable, processedCarIdsTable} from "./db/schema";
 import {eq} from "drizzle-orm";
+import {db} from "./db";
 
 
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: true });
 const otomotoController = new OtomotoController();
-const db = drizzle(process.env.DB_FILE_NAME!);
 
 console.log('Bot is running');
 
