@@ -19,7 +19,7 @@ bot.on("polling_error", (error) => {
   setTimeout(() => bot.startPolling(), 5000);
 });
 
-setInterval(() => checkWebsites(), 5 * 60 * 1000);
+setInterval(() => checkWebsites(), 30 * 60 * 1000);
 
 bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;

@@ -4,7 +4,7 @@ import axios from 'axios';
 
 
 export class OtomotoController implements BasicController {
-  parsingLink = 'https://www.otomoto.pl/osobowe/tesla/model-3/od-2020?search%5Bfilter_enum_damaged%5D=0&search%5Bfilter_float_mileage:to%5D=140000&search%5Bfilter_float_price:to%5D=110000&search%5Border%5D=created_at_first:desc';
+  parsingLink = 'https://www.otomoto.pl/osobowe/seg-sedan/od-2018?search%5Bfilter_enum_damaged%5D=0&search%5Bfilter_enum_driver_seat_electrically_adjustable%5D=1&search%5Bfilter_enum_gearbox%5D=automatic&search%5Bfilter_enum_registered%5D=1&search%5Bfilter_enum_upholstery_type%5D=leather-upholstery&search%5Bfilter_float_mileage:to%5D=125000&search%5Bfilter_float_price:from%5D=55000&search%5Bfilter_float_price:to%5D=85000&search%5Border%5D=created_at_first:desc&search%5Badvanced_search_expanded%5D=true';
 
   async checkForNewListings(): Promise<Record<string, string>> {
     const newListingUrls: Record<string, string> = {};
